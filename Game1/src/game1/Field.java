@@ -17,7 +17,6 @@ public class Field extends World {
     int lowerBound;
     int ballsPerRow = 14;
     int ballsPerColumn = 5;
-    //Ball[][] balls = new Ball[ballsPerRow][ballsPerColumn];
     ArrayList<Ball> balls = new ArrayList();
     int radius = 25;
 
@@ -44,12 +43,12 @@ public class Field extends World {
         int randomNum = rand.nextInt((max - min) + 1) + min;
 
         return randomNum;
-    } 
-    
+    }
+
     public WorldImage makeImage() {
-        WorldImage background = new RectangleImage(new Posn(0,0), this.rightBound, this.upperBound, new White());
+        WorldImage background = new RectangleImage(new Posn(0, 0), this.rightBound, this.upperBound, new White());
         WorldImage result = background;
-        for ( int i = 0; i < balls.size(); i++ ) {
+        for (int i = 0; i < balls.size(); i++) {
             Ball b = this.balls.get(i);
             result = new OverlayImages(result, b.makeImage());
         }
@@ -71,35 +70,34 @@ public class Field extends World {
     }
 
     public Field launch(Posn p, Ball b, Posn pp) {
-        
 
         int deltaY = 10;
 
-        Posn nuevoPosn = new Posn(p.x , p.y - deltaY);
+        Posn nuevoPosn = new Posn(p.x, p.y - deltaY);
         Ball nuevoBall = new Ball(nuevoPosn, b.type, true);
-        System.out.println("x = " + nuevoPosn.x + " y = " + nuevoPosn.y);
+        this.balls.remove(b);
         if (this.stopHuh(nuevoBall) != true) {
-            this.balls.remove(b);
             return launch(nuevoPosn,
                     nuevoBall,
                     pp);
         } else {
-            System.out.println("something");
             Field field = new Field(this.leftBound, this.rightBound, this.upperBound, this.lowerBound);
             field.balls = this.balls;
             field.balls.add(nuevoBall);
             
+            //RUN breakChains here!!! Run on balls.get(size() -1);
+
             Ball nuenBall = new Ball(new Posn(this.leftBound + radius + 5, (this.upperBound - this.radius)),
-                randInt(1, 3),
-                false);
+                    randInt(1, 3),
+                    false);
             field.balls.add(nuenBall);
             return field;
         }
     }
 
     public Boolean stopHuh(Ball b) {
-        for (int i = 0; i < balls.size()-1; i++) {
-            if( b.touching(balls.get(i)) || b.touchingWall(this)){
+        for (int i = 0; i < balls.size(); i++) {
+            if (b.touching(balls.get(i)) || b.touchingWall(this)) {
                 return true;
             }
             System.out.println("Checked ball " + i);
@@ -120,18 +118,29 @@ public class Field extends World {
                 this.balls.get(balls.size() - 1),
                 mouse);
     }
-    
-    public World onKeyEvent(String key){
-        if(key.equals("left")){
-            this.balls.get(balls.size()-1).position.x = this.balls.get(balls.size()-1).position.x - (2 * radius);
-            return this; 
-        } else if(key.equals("right")){
-            this.balls.get(balls.size() -1).position.x = this.balls.get(balls.size()-1).position.x + (2 * radius);
+
+    public World onKeyEvent(String key) {
+        Ball refBall = balls.get(balls.size() - 1);
+        if (key.equals("left")
+                && refBall.position.x - (2 * radius) >= this.leftBound + radius) {
+            int nuevoX = refBall.position.x - (2 * radius);
+            Ball nuevoBall = new Ball(new Posn(nuevoX, refBall.position.y), refBall.type, true);
+            balls.remove(refBall);
+            balls.add(nuevoBall);
             return this;
-        } else if(key.equals("up")){
-            return launch(this.balls.get(balls.size()-1).position,
-                    this.balls.get(balls.size()-1),
-                    new Posn(10,10));
-        } else return this;
-    } 
+        } else if (key.equals("right")
+                && refBall.position.x + (2 * radius) <= this.rightBound - radius) {
+            int nuevoX = refBall.position.x + (2 * radius);
+            Ball nuevoBall = new Ball(new Posn(nuevoX, refBall.position.y), refBall.type, true);
+            balls.remove(refBall);
+            balls.add(nuevoBall);
+            return this;
+        } else if (key.equals("up")) {
+            return launch(this.balls.get(balls.size() - 1).position,
+                    this.balls.get(balls.size() - 1),
+                    new Posn(10, 10));
+        } else {
+            return this;
+        }
+    }
 }

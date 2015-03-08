@@ -19,7 +19,7 @@ public class Ball extends World implements Object {
         this.position = position;
         this.type = type;
         this.inPlay = inPlay;
-        this.circ = new DiskImage(position, this.radius, randColor(randInt()));
+        this.circ = new DiskImage(position, this.radius, randColor(type));
     }
 
     public Posn getPosn() {
@@ -35,7 +35,7 @@ public class Ball extends World implements Object {
     }
 
     public Boolean equalType(Ball b) {
-        return this.type == b.type;
+        return ballType() == b.type;
     }
 
     public Boolean touching(Ball b) {

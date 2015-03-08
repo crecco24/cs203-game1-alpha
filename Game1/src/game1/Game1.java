@@ -7,12 +7,6 @@ import javalib.worldimages.Posn;
 
 public class Game1 {
 
-    public static int randInt() {
-        Random rand = new Random();
-        int randomNum = rand.nextInt((3 - 1) + 1) + 1;
-
-        return randomNum;
-    }
 
     public static void main(String[] args) {
 
