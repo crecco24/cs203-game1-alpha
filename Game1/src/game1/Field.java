@@ -28,13 +28,13 @@ public class Field extends World {
 
         for (int i = 0; i < ballsPerRow; i++) {
             for (int j = 0; j < ballsPerColumn; j++) {
-                int posX = (this.leftBound + radius) + ((2 * i) * radius) + 5;
-                int posY = (this.lowerBound + radius) + ((2 * j) * radius);
-                this.balls.add(new Ball(new Posn(posX, posY), randInt(1, 3), true));
+                int posX = (this.leftBound + radius) + ((2 * i) * (radius - 1)) + 5;
+                int posY = (this.lowerBound + radius) + ((2 * j) * (radius - 1));
+                this.balls.add(new Ball(new Posn(posX, posY), randInt(1, 4), true));
             }
         }
         this.balls.add(new Ball(new Posn(this.leftBound + radius + 5, (this.upperBound - this.radius)),
-                randInt(1, 3),
+                randInt(1, 4),
                 false));
     }
 
@@ -71,7 +71,7 @@ public class Field extends World {
 
     public Field launch(Posn p, Ball b, Posn pp) {
 
-        int deltaY = 10;
+        int deltaY = 1;
 
         Posn nuevoPosn = new Posn(p.x, p.y - deltaY);
         Ball nuevoBall = new Ball(nuevoPosn, b.type, true);
@@ -84,11 +84,11 @@ public class Field extends World {
             Field field = new Field(this.leftBound, this.rightBound, this.upperBound, this.lowerBound);
             field.balls = this.balls;
             field.balls.add(nuevoBall);
-            
-            //RUN breakChains here!!! Run on balls.get(size() -1);
+
+            breakChains(balls.get(balls.size() - 1));
 
             Ball nuenBall = new Ball(new Posn(this.leftBound + radius + 5, (this.upperBound - this.radius)),
-                    randInt(1, 3),
+                    randInt(1, 4),
                     false);
             field.balls.add(nuenBall);
             return field;
@@ -100,17 +100,55 @@ public class Field extends World {
             if (b.touching(balls.get(i)) || b.touchingWall(this)) {
                 return true;
             }
-            System.out.println("Checked ball " + i);
         }
         return false;
     }
 
-    public Field breakChains(int counter) {
-        for (int i = 0; i < balls.size(); i++) {
-            if (this.balls.get(balls.size() - 1).touching(balls.get(i))) {
+    public Field breakChains(Ball b) {
+        ArrayList<Ball> toTest = new ArrayList();
+        toTest.add(b);
+        ArrayList<Ball> tested = new ArrayList();
+
+        ArrayList<Ball> nextChain = nextChain(toTest, tested);
+
+        if (!nextChain.isEmpty() && nextChain.size() >= 3) {
+            for (int i = 0; i < nextChain.size(); i++) {
+                System.out.println("Removed indexes " + i);
+                balls.remove(nextChain.get(i));
             }
+            return this;
+        } else return this;
+    }
+
+    public ArrayList nextChain(ArrayList<Ball> toTest, ArrayList<Ball> tested) {
+        if (toTest.isEmpty()) {
+            return tested;
+        } else {
+            System.out.println("toTest is non-empty");
+            if (!tested.isEmpty()) {
+                System.out.println("Tested is non-empty");
+                for (int h = 0; h < tested.size(); h++) {
+                    balls.remove(tested.get(h));
+                    System.out.println("successfully removed " + h);
+                }
+            }
+            for (int i = 0; i < toTest.size(); i++) {
+                for (int j = 0; j < balls.size() - 1; j++) {
+                    if (toTest.get(i).touching(balls.get(j))) {
+                        System.out.println("Successfully tested " + i + "against index " + j);
+                        if (toTest.get(i).equalType(balls.get(j))) {
+                            System.out.println("Same type adding to toTest");
+                            toTest.add(balls.get(j));
+                            balls.remove(balls.get(j));
+                        }
+                    }
+                }
+                tested.add(toTest.get(i));
+                toTest.remove(i);
+            }
+            System.out.println("Recursive case");
+            return nextChain(toTest, tested);
         }
-        return this;
     }
 
     public World onMousePressed(Posn mouse) {
@@ -123,14 +161,14 @@ public class Field extends World {
         Ball refBall = balls.get(balls.size() - 1);
         if (key.equals("left")
                 && refBall.position.x - (2 * radius) >= this.leftBound + radius) {
-            int nuevoX = refBall.position.x - (2 * radius);
+            int nuevoX = refBall.position.x - (2 * (radius - 1));
             Ball nuevoBall = new Ball(new Posn(nuevoX, refBall.position.y), refBall.type, true);
             balls.remove(refBall);
             balls.add(nuevoBall);
             return this;
         } else if (key.equals("right")
                 && refBall.position.x + (2 * radius) <= this.rightBound - radius) {
-            int nuevoX = refBall.position.x + (2 * radius);
+            int nuevoX = refBall.position.x + (2 * (radius - 1));
             Ball nuevoBall = new Ball(new Posn(nuevoX, refBall.position.y), refBall.type, true);
             balls.remove(refBall);
             balls.add(nuevoBall);

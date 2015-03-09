@@ -47,8 +47,9 @@ public class Ball extends World implements Object {
         
         int a = (int) sqrt(dSquare + cSquare);
         
-        if(a <= (2* this.radius)){
+        if(a < (2* this.radius)){
             return true;
+            
         } else {
             return false;
         }
@@ -82,12 +83,6 @@ public class Ball extends World implements Object {
         return java.awt.Color.MAGENTA;
     }
 
-    public static int randInt() {
-        Random rand = new Random();
-        int randomNum = rand.nextInt((3 - 1) + 1) + 1;
-
-        return randomNum;
-    }
 
     @Override
     public WorldImage makeImage() {
