@@ -11,7 +11,7 @@ Controls: -Player uses left and right arrow keys to move the ball at the bottom 
 Rules: -A ball will remain in motion until it comes in contact with another ball or a wall.
        -When 3 or more balls of the same color are in contact with each other the group will disappear.
        
-Score: The players score will be equal to the number of launches it takes to clear the field of play. This number should never be less than 1.
+Score: The players score will be equal to the number of launches it takes to clear the field of play. This number should never be less than 0.
 
 Goal: Remove all balls from the field of play
 
