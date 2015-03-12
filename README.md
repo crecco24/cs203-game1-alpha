@@ -1,14 +1,18 @@
 cs203-game1
 Game: Bubble Popper
 
-Set up: A field containing various colored balls at the top, and a singular colored ball at the bottom along with a nextInQueue ball off to the side.
+Set up: A field containing various colored balls at the top, and a singular colored ball at the bottom which will be launched at the field above
 
-Purpose: Player inputs slope coordinates to "shoot off" the queued ball at the field of balls in play, aiming at balls of the same color. Once a ball is in contact with another ball it becomes part of a group. Groups of size 3 or greater dissappear.
+Purpose: To remove all balls from the playing field by combining them into groups of 3 or greater.
+
+Controls: -Player uses left and right arrow keys to move the ball at the bottom of the screen left and right, respectively. This ball should never move outside the bounds of the field of play and will stop when it can not move further left or right
+          -The up arrow key then launches that ball vertically up the screen.
+
+Rules: -A ball will remain in motion until it comes in contact with another ball or a wall.
+       -When 3 or more balls of the same color are in contact with each other the group will disappear.
+       
+Score: The players score will be equal to the number of launches it takes to clear the field of play. This number should never be less than 1.
 
 Goal: Remove all balls from the field of play
 
-Additional aspects: Field will be randomly generated with every game. Difficulty modes can increase the width of the field, and number of starting balls A counter will keep track of how many moves it takes for you to finish. Once balls come in contact with a wall it will stop
 
-States of game: 3 states. 1) Playing- balls active in the field of play 2) Win- no balls active in the field of play 3) Lose- balls extend past a threshhold line on the field of play indicating game over
-
-Pre game thoughts: 1) Balls can be designated int values for easy comparison 2) Balls must be assigned states of "inPlay" (once settled on the field), "outOfPlay" (either next to be shot or nextInQueu) ->therefore the lose state will only be initialized once a ball of "inPlay" state crosses that line 3) ...
