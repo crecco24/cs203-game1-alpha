@@ -9,7 +9,7 @@ import javalib.worldimages.Posn;
 public class Game1 {
 
     public static void main(String[] args) {
-        Field field = new Field(0, 720, 720, 0);
+        Field field = new Field();
         field.bigBang(field.rightBound, field.upperBound, 1);
         System.out.println("UpperBound is " + field.upperBound);
         System.out.println("Ball limit is " + field.ballLimit);

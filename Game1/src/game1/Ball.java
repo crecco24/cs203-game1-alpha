@@ -11,23 +11,17 @@ public class Ball extends World implements Object {
 
     Posn position;
     int type;
-    boolean inPlay;
     int radius = 25;
     public DiskImage circ;
 
-    Ball(Posn position, int type, Boolean inPlay) {
+    Ball(Posn position, int type) {
         this.position = position;
         this.type = type;
-        this.inPlay = inPlay;
         this.circ = new DiskImage(position, this.radius, randColor(type));
     }
 
     public Posn getPosn() {
         return this.position;
-    }
-
-    public Boolean inPlay() {
-        return this.inPlay;
     }
 
     public int ballType() {
@@ -63,10 +57,6 @@ public class Ball extends World implements Object {
         } else if(this.position.y - radius <= f.lowerBound){
             return true;
         } else return false;
-    }
-
-    public Ball move(Posn p) {
-        return new Ball(p, this.type, true);
     }
     
 

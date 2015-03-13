@@ -1,43 +1,37 @@
 package game1;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import javalib.colors.*;
 import javalib.funworld.World;
 import javalib.worldimages.*;
+import java.awt.Color;
+import javalib.colors.*;
 
 public class Field extends World {
 
     int counter;
-    int leftBound;
-    int rightBound;
-    int upperBound;
-    int lowerBound;
+    int leftBound = 0;
+    int rightBound = 720;
+    int upperBound = 720;
+    int lowerBound = 0;
     int ballsPerRow = 14;
     int ballsPerColumn = 5;
     ArrayList<Ball> balls = new ArrayList();
     int radius = 25;
-    int ballLimit;
+    int ballLimit = 720 - (2 * (radius + 1));
 
-    public Field(int l, int r, int u, int lo) {
-        this.leftBound = l;
-        this.rightBound = r;
-        this.upperBound = u;
-        this.lowerBound = lo;
-        this.ballLimit = -(2 * (radius + 1)) + upperBound;
+    public Field() {
 
         for (int i = 0; i < ballsPerRow; i++) {
             for (int j = 0; j < ballsPerColumn; j++) {
                 int posX = (this.leftBound + radius) + ((2 * i) * (radius - 1)) + 5;
                 int posY = (this.lowerBound + radius) + ((2 * j) * (radius - 1));
-                this.balls.add(new Ball(new Posn(posX, posY), randInt(1, 4), true));
+                this.balls.add(new Ball(new Posn(posX, posY), randInt(1, 4)));
             }
         }
         this.balls.add(new Ball(new Posn(this.leftBound + radius + 5, (this.upperBound - this.radius)),
-                randInt(1, 4),
-                false));
+                randInt(1, 4)));
     }
 
     public static int randInt(int min, int max) {
@@ -60,21 +54,36 @@ public class Field extends World {
         return result;
     }
 
+    public WorldImage makeImageB() {
+        OverlayImages img = new OverlayImages(new DiskImage(this.balls.get(0).position, this.balls.get(0).radius, this.balls.get(0).randColor(this.balls.get(0).type)),
+                new DiskImage(this.balls.get(1).position, this.balls.get(1).radius, this.balls.get(1).randColor(this.balls.get(1).type)));
+
+        for (int i = 0; i < balls.size(); i++) {
+            img = new OverlayImages(img, new DiskImage(this.balls.get(i).position, this.balls.get(i).radius, this.balls.get(i).randColor(this.balls.get(i).type)));
+        }
+
+        img = new OverlayImages(img, new DiskImage(this.balls.get(balls.size() - 1).position,
+                this.balls.get(balls.size() - 1).radius,
+                this.balls.get(balls.size() - 1).randColor(this.balls.get(balls.size() - 1).type)));
+        return img;
+    }
+
     public Field launch(Posn p, Ball b, Posn pp) {
 
         int deltaY = 1;
 
         Posn nuevoPosn = new Posn(p.x, p.y - deltaY);
-        Ball nuevoBall = new Ball(nuevoPosn, b.type, true);
+        Ball nuevoBall = new Ball(nuevoPosn, b.type);
         this.balls.remove(b);
         if (this.stopHuh(nuevoBall) != true) {
             return launch(nuevoPosn,
                     nuevoBall,
                     pp);
         } else {
-            Field field = new Field(this.leftBound, this.rightBound, this.upperBound, this.lowerBound);
+            Field field = new Field();
             field.balls = this.balls;
             field.balls.add(nuevoBall);
+
             counter++;
 
             field.counter = counter;
@@ -82,12 +91,9 @@ public class Field extends World {
             breakChains(balls.get(balls.size() - 1));
 
             Ball nuenBall = new Ball(new Posn(this.leftBound + radius + 5, (this.upperBound - this.radius)),
-                    randInt(1, 4),
-                    false);
+                    randInt(1, 4));
             field.balls.add(nuenBall);
-            System.out.println("Score is " + counter);
             return field;
-
         }
     }
 
@@ -103,13 +109,11 @@ public class Field extends World {
     public Field breakChains(Ball b) {
         ArrayList<Ball> toTest = new ArrayList();
         toTest.add(b);
-
         ArrayList<Ball> tested = new ArrayList();
 
         ArrayList<Ball> nextChain = nextChain(toTest, tested);
 
         if (!nextChain.isEmpty() && nextChain.size() >= 3) {
-            System.out.println("Removing nextChain in breakChains");
             for (int i = 0; i < nextChain.size(); i++) {
                 System.out.println("Removed indexes " + i);
                 balls.remove(nextChain.get(i));
@@ -121,10 +125,10 @@ public class Field extends World {
     }
 
     public ArrayList nextChain(ArrayList<Ball> toTest, ArrayList<Ball> tested) {
+
         ArrayList<Ball> testerList = (ArrayList<Ball>) balls.clone();
 
         if (toTest.isEmpty()) {
-            System.out.println("The size of tested is: " + tested.size());
             return tested;
         } else {
             System.out.println("toTest is non-empty");
@@ -138,7 +142,7 @@ public class Field extends World {
             for (int i = 0; i < toTest.size(); i++) {
                 for (int j = 0; j < testerList.size() - 1; j++) {
                     if (toTest.get(i).touching(testerList.get(j))) {
-                        System.out.println("Successfully tested " + i + " against index " + j);
+                        System.out.println("Successfully tested " + i + "against index " + j);
                         if (toTest.get(i).equalType(testerList.get(j))) {
                             System.out.println("Same type adding to toTest");
                             toTest.add(testerList.get(j));
@@ -165,14 +169,14 @@ public class Field extends World {
         if (key.equals("left")
                 && refBall.position.x - (2 * radius) >= this.leftBound + radius) {
             int nuevoX = refBall.position.x - (2 * (radius - 1));
-            Ball nuevoBall = new Ball(new Posn(nuevoX, refBall.position.y), refBall.type, true);
+            Ball nuevoBall = new Ball(new Posn(nuevoX, refBall.position.y), refBall.type);
             balls.remove(refBall);
             balls.add(nuevoBall);
             return this;
         } else if (key.equals("right")
                 && refBall.position.x + (2 * radius) <= this.rightBound - radius) {
             int nuevoX = refBall.position.x + (2 * (radius - 1));
-            Ball nuevoBall = new Ball(new Posn(nuevoX, refBall.position.y), refBall.type, true);
+            Ball nuevoBall = new Ball(new Posn(nuevoX, refBall.position.y), refBall.type);
             balls.remove(refBall);
             balls.add(nuevoBall);
             return this;
@@ -184,20 +188,21 @@ public class Field extends World {
             return this;
         }
     }
-    
-    public WorldImage lastImage(String s){
-        return new TextImage(new Posn((rightBound-leftBound)/2, (upperBound-lowerBound)/2),
-                             s,
-                             30,
-                             java.awt.Color.BLACK);
+
+    public WorldImage lastImage(String s) {
+        return new TextImage(new Posn((rightBound - leftBound) / 2, (upperBound - lowerBound) / 2),
+                s,
+                30,
+                java.awt.Color.BLACK);
     }
 
     public WorldEnd worldEnds() {
-        if (balls.size() <= 1){
+        if (balls.size() <= 1) {
             return new WorldEnd(true, this.lastImage("Game over! Score is " + counter));
-        } else
-            if (balls.get(balls.size() - 2).position.y + radius >= ballLimit) {
+        } else if (balls.get(balls.size() - 2).position.y + radius >= ballLimit) {
             return new WorldEnd(true, this.lastImage("Game over! You lose"));
-        } else return new WorldEnd(false, this.makeImage());
+        } else {
+            return new WorldEnd(false, this.makeImage());
+        }
     }
 }

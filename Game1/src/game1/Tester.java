@@ -12,7 +12,7 @@ public class Tester {
         return (Field) field.onKeyEvent(key);
     }
 
-    public boolean moveUserBall(Field field) {
+    public static boolean testBallMovement(Field field) {
         String key = randomKey();
         int currentX = field.balls.get(field.balls.size() - 1).position.x;
         int currentY = field.balls.get(field.balls.size() - 1).position.y;
@@ -26,20 +26,20 @@ public class Tester {
             if ((newX == currentX + (2 * (field.radius - 1)))
                     || (newX >= field.rightBound - (2 * field.radius - 1))) {
                 return true;
-            }
+            } else return false;
         }
 
         if (key.equals("left")) {
             if ((newX == currentX - (2 * (field.radius - 1)))
                     || (newX <= field.rightBound + (2 * field.radius - 1))) {
                 return true;
-            }
+            } else return false;
         }
 
         if (key.equals("up")) {
             if (newY <= currentY) {
                 return true;
-            }
+            } else return false;
         }
 
         if (key.equals("1")) {
@@ -52,7 +52,7 @@ public class Tester {
             return false;
     }
 
-    public String randomKey() {
+    public static String randomKey() {
         Random rand = new Random();
         int nextInt = Math.abs(rand.nextInt());
         if (nextInt % 4 == 0) {
@@ -66,14 +66,14 @@ public class Tester {
         }
     }
     
-    public boolean scoreTest(Field field){
+    public static boolean testScore(Field field){
         int score = field.counter;
         if(score >= 0){
             return true;
         } else return false;
     }
     
-    public boolean removedGroupSize(Field oldField, Field newField){
+    public static boolean testRemovedGroupSize(Field oldField, Field newField){
         if (newField.balls.size() < oldField.balls.size()){
             if(newField.balls.size() > oldField.balls.size() - 3){
                 return false;
@@ -81,5 +81,28 @@ public class Tester {
         } else if(newField.balls.size() > oldField.balls.size() + 1){
             return false;
         } else return true;
+    }
+    
+    public static boolean testBelowBallLimit(){
+        return true;
+    }
+    
+    public static boolean testInFieldOfPlay(){
+        return true;
+    }
+    
+     public static void main(String[] args) {
+        Field field = new Field();
+        boolean baller = true;
+        for(int i = 0; i < 1000; i++){
+            baller = testBallMovement(field);
+            
+            if(baller == false){
+                System.out.println("User ball movement doesn't match control: Test failed.");
+            }
+        }
+        System.out.println("Test for userball movement is successful?... " + baller + " .On 1000 tests");
+        
+        
     }
 }
