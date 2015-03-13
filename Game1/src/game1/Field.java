@@ -115,7 +115,6 @@ public class Field extends World {
 
         if (!nextChain.isEmpty() && nextChain.size() >= 3) {
             for (int i = 0; i < nextChain.size(); i++) {
-                System.out.println("Removed indexes " + i);
                 balls.remove(nextChain.get(i));
             }
             return this;
@@ -131,20 +130,15 @@ public class Field extends World {
         if (toTest.isEmpty()) {
             return tested;
         } else {
-            System.out.println("toTest is non-empty");
             if (!tested.isEmpty()) {
-                System.out.println("Tested is non-empty");
                 for (int h = 0; h < tested.size(); h++) {
                     testerList.remove(tested.get(h));
-                    System.out.println("successfully removed " + h);
                 }
             }
             for (int i = 0; i < toTest.size(); i++) {
                 for (int j = 0; j < testerList.size() - 1; j++) {
                     if (toTest.get(i).touching(testerList.get(j))) {
-                        System.out.println("Successfully tested " + i + "against index " + j);
                         if (toTest.get(i).equalType(testerList.get(j))) {
-                            System.out.println("Same type adding to toTest");
                             toTest.add(testerList.get(j));
                             testerList.remove(testerList.get(j));
                         }
@@ -153,7 +147,6 @@ public class Field extends World {
                 tested.add(toTest.get(i));
                 toTest.remove(i);
             }
-            System.out.println("Recursive case");
             return nextChain(toTest, tested);
         }
     }
